@@ -2,13 +2,14 @@ package ff4go
 
 import (
 	"encoding/json"
+	"math/rand/v2"
 	"slices"
 )
 
 type Rules struct {
 	Users        []string `json:"users"`
 	Environments []string `json:"environments"`
-	// Percentage   float64  `json:"percentage"`
+	Percentage   float64  `json:"percentage"`
 }
 
 type FeatureFlag struct {
@@ -32,16 +33,6 @@ func NewManager(data []byte) (*Manager, error) {
 	return Manager, nil
 }
 
-func (m *Manager) getFlag(name string) (*FeatureFlag, bool) {
-	for _, flag := range m.Flags {
-		if flag.Name == name {
-			return &flag, true
-		}
-	}
-
-	return nil, false
-}
-
 func (m *Manager) IsEnabled(name string) bool {
 	flag, found := m.getFlag(name)
 
@@ -59,6 +50,10 @@ func (m *Manager) IsEnabledForUser(name, user string) bool {
 		return false
 	}
 
+	if m.containsPercentage(flag) {
+		return m.calculatePercentage(flag)
+	}
+
 	return slices.Contains(flag.Rules.Users, user)
 }
 
@@ -69,5 +64,33 @@ func (m *Manager) IsEnabledForEnvironment(name, environment string) bool {
 		return false
 	}
 
+	if m.containsPercentage(flag) {
+		return m.calculatePercentage(flag)
+	}
+
 	return slices.Contains(flag.Rules.Environments, environment)
+}
+
+func (m *Manager) getFlag(name string) (*FeatureFlag, bool) {
+	for _, flag := range m.Flags {
+		if flag.Name == name {
+			return &flag, true
+		}
+	}
+
+	return nil, false
+}
+
+func (m *Manager) containsPercentage(flag *FeatureFlag) bool {
+	percentage := flag.Rules.Percentage
+
+	if percentage <= 0 || percentage > 100 {
+		return false
+	}
+
+	return true
+}
+
+func (m *Manager) calculatePercentage(flag *FeatureFlag) bool {
+	return rand.Float64() < float64(flag.Rules.Percentage)/float64(100)
 }
