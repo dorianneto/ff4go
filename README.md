@@ -1,3 +1,4 @@
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/dorianneto/ff4go/go.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/dorianneto/ff4go)](https://goreportcard.com/report/github.com/dorianneto/ff4go)
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/dorianneto/ff4go)
 ![GitHub License](https://img.shields.io/github/license/dorianneto/ff4go)
