@@ -2,11 +2,13 @@ package ff4go
 
 import (
 	"encoding/json"
+	"slices"
 )
 
 type Rules struct {
 	Users        []string `json:"users"`
 	Environments []string `json:"environments"`
+	// Percentage   float64  `json:"percentage"`
 }
 
 type FeatureFlag struct {
@@ -48,4 +50,24 @@ func (m *Manager) IsEnabled(name string) bool {
 	}
 
 	return flag.Enabled
+}
+
+func (m *Manager) IsEnabledForUser(name, user string) bool {
+	flag, found := m.getFlag(name)
+
+	if !found || !flag.Enabled {
+		return false
+	}
+
+	return slices.Contains(flag.Rules.Users, user)
+}
+
+func (m *Manager) IsEnabledForEnvironment(name, environment string) bool {
+	flag, found := m.getFlag(name)
+
+	if !found || !flag.Enabled {
+		return false
+	}
+
+	return slices.Contains(flag.Rules.Environments, environment)
 }
