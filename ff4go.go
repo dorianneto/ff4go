@@ -3,6 +3,7 @@ package ff4go
 import (
 	"encoding/json"
 	"math/rand/v2"
+	"reflect"
 	"slices"
 )
 
@@ -44,22 +45,15 @@ func (m *Manager) IsEnabled(name string) bool {
 }
 
 func (m *Manager) IsEnabledForUser(name, user string) bool {
-	flag, found := m.getFlag(name)
-
-	if !found || !flag.Enabled {
-		return false
-	}
-
-	if m.containsPercentage(flag) {
-		return m.calculatePercentage(flag)
-	}
-
-	return slices.Contains(flag.Rules.Users, user)
+	return m.isEnabledForSomething(name, user, "Users")
 }
 
 func (m *Manager) IsEnabledForEnvironment(name, environment string) bool {
-	flag, found := m.getFlag(name)
+	return m.isEnabledForSomething(name, environment, "Environments")
+}
 
+func (m *Manager) isEnabledForSomething(name, something, field string) bool {
+	flag, found := m.getFlag(name)
 	if !found || !flag.Enabled {
 		return false
 	}
@@ -68,7 +62,12 @@ func (m *Manager) IsEnabledForEnvironment(name, environment string) bool {
 		return m.calculatePercentage(flag)
 	}
 
-	return slices.Contains(flag.Rules.Environments, environment)
+	fieldValue, ok := reflect.ValueOf(flag.Rules).FieldByName(field).Interface().([]string)
+	if !ok {
+		return false
+	}
+
+	return slices.Contains(fieldValue, something)
 }
 
 func (m *Manager) getFlag(name string) (*FeatureFlag, bool) {
