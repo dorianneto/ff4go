@@ -17,8 +17,21 @@ First, you need to install the dependency
 go get github.com/dorianneto/ff4go
 ```
 
-Once the dependency is installed, you can use it like this:
+Create an `ff4go.json` file at your project root:
+```json
+{
+  "flags": [
+    {
+      "name": "new-ui",
+      "enabled": true,
+      "rules": { "users": ["user1"], "environments": ["development"] }
+    }
+  ]
+}
 ```
+
+Once the dependency is installed, you can use it like this:
+```go
 package main
 
 import (
@@ -28,7 +41,7 @@ import (
 )
 
 func main() {
-	m, err := ff4go.NewManager([]byte(`{"flags":[{"name":"new-ui","enabled":true,"rules":{"users":["user1"],"environments":["development"]}}]}`))
+	m, err := ff4go.NewManagerFromFile()
 	if err != nil {
 		panic(err)
 	}

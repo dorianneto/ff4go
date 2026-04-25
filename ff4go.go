@@ -3,6 +3,7 @@ package ff4go
 import (
 	"encoding/json"
 	"math/rand/v2"
+	"os"
 	"reflect"
 	"slices"
 )
@@ -24,7 +25,9 @@ type Manager struct {
 	Flags []FeatureFlag `json:"flags"`
 }
 
-func NewManager(data []byte) (*Manager, error) {
+const flagsFilePath = "ff4go.json"
+
+func newManager(data []byte) (*Manager, error) {
 	var Manager *Manager
 
 	if err := json.Unmarshal(data, &Manager); err != nil {
@@ -32,6 +35,14 @@ func NewManager(data []byte) (*Manager, error) {
 	}
 
 	return Manager, nil
+}
+
+func NewManagerFromFile() (*Manager, error) {
+	data, err := os.ReadFile(flagsFilePath)
+	if err != nil {
+		return nil, err
+	}
+	return newManager(data)
 }
 
 func (m *Manager) IsEnabled(name string) bool {

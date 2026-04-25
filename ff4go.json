@@ -1,0 +1,9 @@
+{
+  "flags": [
+    {
+      "name": "new-ui",
+      "enabled": true,
+      "rules": { "users": ["user1"], "environments": ["development"] }
+    }
+  ]
+}

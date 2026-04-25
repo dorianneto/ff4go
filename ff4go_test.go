@@ -2,8 +2,18 @@ package ff4go
 
 import "testing"
 
+func TestNewManagerFromFile(t *testing.T) {
+	m, err := NewManagerFromFile()
+	if err != nil {
+		t.Errorf("Error initializing manager from file: %v", err)
+	}
+	if !m.IsEnabled("new-ui") {
+		t.Errorf("Expected new-ui to be enabled")
+	}
+}
+
 func TestWhenFeatureFlagIsEnabled(t *testing.T) {
-	m, err := NewManager([]byte(`{"flags":[{"name":"new-ui","enabled":true}]}`))
+	m, err := newManager([]byte(`{"flags":[{"name":"new-ui","enabled":true}]}`))
 	if err != nil {
 		t.Errorf("Error on initializing manager")
 	}
@@ -17,7 +27,7 @@ func TestWhenFeatureFlagIsEnabled(t *testing.T) {
 }
 
 func TestWhenFeatureFlagIsEnabledForAnUser(t *testing.T) {
-	m, err := NewManager([]byte(`{"flags":[{"name":"new-ui","enabled":true,"rules":{"users":["user1"]}}]}`))
+	m, err := newManager([]byte(`{"flags":[{"name":"new-ui","enabled":true,"rules":{"users":["user1"]}}]}`))
 	if err != nil {
 		t.Errorf("Error on initializing manager")
 	}
@@ -31,7 +41,7 @@ func TestWhenFeatureFlagIsEnabledForAnUser(t *testing.T) {
 }
 
 func TestWhenFeatureFlagIsEnabledForAnEnvironment(t *testing.T) {
-	m, err := NewManager([]byte(`{"flags":[{"name":"new-ui","enabled":true,"rules":{"environments":["development"]}}]}`))
+	m, err := newManager([]byte(`{"flags":[{"name":"new-ui","enabled":true,"rules":{"environments":["development"]}}]}`))
 	if err != nil {
 		t.Errorf("Error on initializing manager")
 	}

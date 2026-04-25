@@ -22,8 +22,12 @@ go test -v -run TestWhenFeatureFlagIsEnabled ./...
 - `ff4go.go` — the library itself
 - `ff4go_test.go` — tests
 
+**Initialization:**
+
+The only public constructor is `NewManagerFromFile() (*Manager, error)`. It reads `ff4go.json` from the process's working directory (the constant `flagsFilePath = "ff4go.json"`). Consumers must place `ff4go.json` at their project root. `newManager([]byte)` is the internal JSON-unmarshaling helper used by the constructor.
+
 **Core types:**
-- `Manager` — holds a slice of `FeatureFlag`; created via `NewManager([]byte)` which unmarshals a JSON payload
+- `Manager` — holds a slice of `FeatureFlag`; the receiver for all query methods
 - `FeatureFlag` — has a name, enabled bool, description, and a `Rules` struct
 - `Rules` — three targeting dimensions: `Users []string`, `Environments []string`, `Percentage float64`
 
@@ -34,7 +38,7 @@ go test -v -run TestWhenFeatureFlagIsEnabled ./...
 
 Both targeting methods route through `isEnabledForSomething`, which uses reflection to select the `Users` or `Environments` field from `Rules`. If `Percentage` is set (0 < p ≤ 100), it takes precedence over the list-based check and returns a probabilistic result via `rand.Float64()`.
 
-**JSON schema expected by `NewManager`:**
+**`ff4go.json` schema:**
 ```json
 {
   "flags": [
