@@ -51,15 +51,3 @@ func main() {
 	fmt.Println(m.IsEnabledForEnvironment("new-ui", "staging")) // false
 }
 ```
-
-## SDK
-
-| Language | SDK |
-| -------- | ------- |
-| Go | [ff4go](https://github.com/dorianneto/ff4go) |
-| Typescript | coming soon |
-
-
-## License
-
-[MIT](https://github.com/dorianneto/ff4go/blob/main/LICENSE)
