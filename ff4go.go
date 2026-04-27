@@ -2,7 +2,6 @@ package ff4go
 
 import (
 	"encoding/json"
-	"math/rand/v2"
 	"os"
 	"reflect"
 	"slices"
@@ -70,7 +69,7 @@ func (m *Manager) isEnabledForSomething(name, something, field string) bool {
 	}
 
 	if m.containsPercentage(flag) {
-		return m.calculatePercentage(flag)
+		return m.calculatePercentage(flag, something)
 	}
 
 	fieldValue, ok := reflect.ValueOf(flag.Rules).FieldByName(field).Interface().([]string)
@@ -101,6 +100,7 @@ func (m *Manager) containsPercentage(flag *FeatureFlag) bool {
 	return true
 }
 
-func (m *Manager) calculatePercentage(flag *FeatureFlag) bool {
-	return rand.Float64() < float64(flag.Rules.Percentage)/float64(100)
+func (m *Manager) calculatePercentage(flag *FeatureFlag, id string) bool {
+	score := hashStringToFloat(flag.Name, id)
+	return score < float64(flag.Rules.Percentage)/float64(100)
 }

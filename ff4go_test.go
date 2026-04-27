@@ -53,3 +53,17 @@ func TestWhenFeatureFlagIsEnabledForAnEnvironment(t *testing.T) {
 		t.Errorf("Expected %v but got %v", want, ff)
 	}
 }
+
+func TestWhenFeatureFlagIsEnabledForAnUserWithPercentage(t *testing.T) {
+	m, err := newManager([]byte(`{"flags":[{"name":"new-ui","enabled":true,"rules":{"percentage": 50,"users":["user1"]}}]}`))
+	if err != nil {
+		t.Errorf("Error on initializing manager")
+	}
+
+	ff := m.IsEnabledForUser("new-ui", "user1")
+	want := false
+
+	if want != ff {
+		t.Errorf("Expected %v but got %v", want, ff)
+	}
+}
