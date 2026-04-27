@@ -1,6 +1,9 @@
 package ff4go
 
-import "testing"
+import (
+	"testing"
+	"time"
+)
 
 func TestNewManagerFromFile(t *testing.T) {
 	m, err := NewManagerFromFile()
@@ -93,5 +96,30 @@ func TestWhenItHasFeatureFlag(t *testing.T) {
 
 	if want != ff {
 		t.Errorf("Expected %v but got %v", want, ff)
+	}
+}
+
+func TestWhenFeatureFlagIsNotEnabledWithExpireDate(t *testing.T) {
+	tests := []struct {
+		date     string
+		expected bool
+	}{
+		{date: "2023-01-01T00:00:00Z", expected: false},
+		{date: time.Now().Add(24 * time.Hour).Format(time.RFC3339), expected: true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.date, func(t *testing.T) {
+			m, err := NewManagerFromBytes([]byte(`{"flags":[{"name":"new-ui","enabled":true,"rules":{"users":["user1"],"endAt":"` + tt.date + `","environments":["development"]}}]}`))
+			if err != nil {
+				t.Errorf("Error on initializing manager")
+			}
+
+			ff := m.IsEnabledForUser("new-ui", "user1")
+
+			if tt.expected != ff {
+				t.Errorf("Expected %v but got %v", tt.expected, ff)
+			}
+		})
 	}
 }

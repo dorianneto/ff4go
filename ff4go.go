@@ -11,6 +11,7 @@ type Rules struct {
 	Users        []string `json:"users"`
 	Environments []string `json:"environments"`
 	Percentage   float64  `json:"percentage"`
+	EndAt        string   `json:"endAt"`
 }
 
 type FeatureFlag struct {
@@ -74,6 +75,10 @@ func (m *Manager) IsEnabledForEnvironment(name, environment string) bool {
 func (m *Manager) isEnabledForSomething(name, something, field string) bool {
 	flag, found := m.getFlag(name)
 	if !found || !flag.Enabled {
+		return false
+	}
+
+	if isExpired(flag.Rules.EndAt) {
 		return false
 	}
 

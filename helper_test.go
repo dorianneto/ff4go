@@ -3,6 +3,7 @@ package ff4go
 import (
 	"math"
 	"testing"
+	"time"
 )
 
 func TestHashStringToFloat(t *testing.T) {
@@ -21,6 +22,26 @@ func TestHashStringToFloat(t *testing.T) {
 
 		if result != expected {
 			t.Errorf("hashStringToFloat(%q) = %f; expected %f", test.input, result, expected)
+		}
+	}
+}
+
+func TestIsExpired(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected bool
+	}{
+		{"2023-01-01T00:00:00Z", true},
+		{time.Now().Add(24 * time.Hour).Format(time.RFC3339), false},
+		{"invalid-date", false},
+		{"", false},
+	}
+
+	for _, test := range tests {
+		result := isExpired(test.input)
+
+		if result != test.expected {
+			t.Errorf("isExpired(%q) = %v; expected %v", test.input, result, test.expected)
 		}
 	}
 }
