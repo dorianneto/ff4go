@@ -13,7 +13,7 @@ func TestNewManagerFromFile(t *testing.T) {
 }
 
 func TestWhenFeatureFlagIsEnabled(t *testing.T) {
-	m, err := newManager([]byte(`{"flags":[{"name":"new-ui","enabled":true}]}`))
+	m, err := NewManagerFromBytes([]byte(`{"flags":[{"name":"new-ui","enabled":true}]}`))
 	if err != nil {
 		t.Errorf("Error on initializing manager")
 	}
@@ -27,7 +27,7 @@ func TestWhenFeatureFlagIsEnabled(t *testing.T) {
 }
 
 func TestWhenFeatureFlagIsEnabledForAnUser(t *testing.T) {
-	m, err := newManager([]byte(`{"flags":[{"name":"new-ui","enabled":true,"rules":{"users":["user1"]}}]}`))
+	m, err := NewManagerFromBytes([]byte(`{"flags":[{"name":"new-ui","enabled":true,"rules":{"users":["user1"]}}]}`))
 	if err != nil {
 		t.Errorf("Error on initializing manager")
 	}
@@ -41,7 +41,7 @@ func TestWhenFeatureFlagIsEnabledForAnUser(t *testing.T) {
 }
 
 func TestWhenFeatureFlagIsEnabledForAnEnvironment(t *testing.T) {
-	m, err := newManager([]byte(`{"flags":[{"name":"new-ui","enabled":true,"rules":{"environments":["development"]}}]}`))
+	m, err := NewManagerFromBytes([]byte(`{"flags":[{"name":"new-ui","enabled":true,"rules":{"environments":["development"]}}]}`))
 	if err != nil {
 		t.Errorf("Error on initializing manager")
 	}
@@ -55,7 +55,7 @@ func TestWhenFeatureFlagIsEnabledForAnEnvironment(t *testing.T) {
 }
 
 func TestWhenFeatureFlagIsEnabledForAnUserWithPercentage(t *testing.T) {
-	m, err := newManager([]byte(`{"flags":[{"name":"new-ui","enabled":true,"rules":{"percentage": 50,"users":["user1"]}}]}`))
+	m, err := NewManagerFromBytes([]byte(`{"flags":[{"name":"new-ui","enabled":true,"rules":{"percentage": 50,"users":["user1"]}}]}`))
 	if err != nil {
 		t.Errorf("Error on initializing manager")
 	}

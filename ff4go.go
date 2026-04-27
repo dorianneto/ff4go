@@ -26,14 +26,14 @@ type Manager struct {
 
 const flagsFilePath = "ff4go.json"
 
-func newManager(data []byte) (*Manager, error) {
-	var Manager *Manager
+func NewManagerFromBytes(data []byte) (*Manager, error) {
+	var manager *Manager
 
-	if err := json.Unmarshal(data, &Manager); err != nil {
+	if err := json.Unmarshal(data, &manager); err != nil {
 		return nil, err
 	}
 
-	return Manager, nil
+	return manager, nil
 }
 
 func NewManagerFromFile() (*Manager, error) {
@@ -41,7 +41,7 @@ func NewManagerFromFile() (*Manager, error) {
 	if err != nil {
 		return nil, err
 	}
-	return newManager(data)
+	return NewManagerFromBytes(data)
 }
 
 func (m *Manager) IsEnabled(name string) bool {
