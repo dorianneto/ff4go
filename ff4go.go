@@ -52,6 +52,10 @@ func (m *Manager) IsEnabled(name string) bool {
 		return false
 	}
 
+	if isExpired(flag.Rules.EndAt) {
+		return false
+	}
+
 	return flag.Enabled
 }
 
