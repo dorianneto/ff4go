@@ -54,6 +54,11 @@ func (m *Manager) IsEnabled(name string) bool {
 	return flag.Enabled
 }
 
+func (m *Manager) HasFlag(name string) bool {
+	_, found := m.getFlag(name)
+	return found
+}
+
 func (m *Manager) IsEnabledForUserAndEnvironment(name, user, environment string) bool {
 	return m.IsEnabledForUser(name, user) && m.IsEnabledForEnvironment(name, environment)
 }

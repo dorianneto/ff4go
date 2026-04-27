@@ -81,3 +81,17 @@ func TestWhenFeatureFlagIsEnabledForAnUserAndEnvironment(t *testing.T) {
 		t.Errorf("Expected %v but got %v", want, ff)
 	}
 }
+
+func TestWhenItHasFeatureFlag(t *testing.T) {
+	m, err := NewManagerFromBytes([]byte(`{"flags":[{"name":"new-ui","enabled":true,"rules":{"users":["user1"],"environments":["development"]}}]}`))
+	if err != nil {
+		t.Errorf("Error on initializing manager")
+	}
+
+	ff := m.HasFlag("new-ui")
+	want := true
+
+	if want != ff {
+		t.Errorf("Expected %v but got %v", want, ff)
+	}
+}
