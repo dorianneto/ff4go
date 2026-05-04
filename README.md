@@ -74,6 +74,20 @@ if err != nil {
 ```
 
 
+### From a file with watch
+
+Reads `ff4go.json` from the process working directory and automatically reloads flags when the file changes. Useful for long-running services that need to pick up flag updates without restarting.
+
+```go
+m, err := ff4go.NewManagerFromFileWithWatch()
+if err != nil {
+    panic(err)
+}
+```
+
+The returned `*Manager` pointer is updated in place when the file changes — no need to re-initialize.
+
+
 ## API
 
 ```go
