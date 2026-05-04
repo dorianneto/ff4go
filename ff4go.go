@@ -5,6 +5,9 @@ import (
 	"os"
 	"reflect"
 	"slices"
+
+	"github.com/fsnotify/fsnotify"
+	"github.com/spf13/viper"
 )
 
 type Rules struct {
@@ -43,6 +46,29 @@ func NewManagerFromFile() (*Manager, error) {
 		return nil, err
 	}
 	return NewManagerFromBytes(data)
+}
+
+func NewManagerFromFileWithWatch() (*Manager, error) {
+	var manager *Manager
+
+	viper.SetConfigFile(flagsFilePath)
+	err := viper.ReadInConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	err = viper.Unmarshal(&manager)
+	if err != nil {
+		return nil, err
+	}
+
+	viper.WatchConfig()
+
+	viper.OnConfigChange(func(e fsnotify.Event) {
+		viper.Unmarshal(&manager)
+	})
+
+	return manager, nil
 }
 
 func (m *Manager) IsEnabled(name string) bool {

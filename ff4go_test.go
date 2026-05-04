@@ -1,9 +1,60 @@
 package ff4go
 
 import (
+	"os"
 	"testing"
 	"time"
 )
+
+func TestNewManagerFromFileWithWatch(t *testing.T) {
+	m, err := NewManagerFromFileWithWatch()
+	if err != nil {
+		t.Fatalf("Error initializing manager from file with watch: %v", err)
+	}
+	if !m.IsEnabled("new-ui") {
+		t.Errorf("Expected new-ui to be enabled")
+	}
+}
+
+func TestNewManagerFromFileWithWatch_ReloadsWhenFileChanges(t *testing.T) {
+	originalContent, err := os.ReadFile(flagsFilePath)
+	if err != nil {
+		t.Fatalf("Failed to read original config: %v", err)
+	}
+	t.Cleanup(func() {
+		os.WriteFile(flagsFilePath, originalContent, 0644)
+	})
+
+	initialConfig := `{"flags":[{"name":"watch-flag","enabled":true}]}`
+	if err := os.WriteFile(flagsFilePath, []byte(initialConfig), 0644); err != nil {
+		t.Fatalf("Failed to write initial config: %v", err)
+	}
+
+	m, err := NewManagerFromFileWithWatch()
+	if err != nil {
+		t.Fatalf("Error initializing manager: %v", err)
+	}
+	if !m.IsEnabled("watch-flag") {
+		t.Errorf("Expected watch-flag to be enabled initially")
+	}
+
+	updatedConfig := `{"flags":[{"name":"watch-flag","enabled":false}]}`
+	if err := os.WriteFile(flagsFilePath, []byte(updatedConfig), 0644); err != nil {
+		t.Fatalf("Failed to write updated config: %v", err)
+	}
+
+	deadline := time.Now().Add(2 * time.Second)
+	for time.Now().Before(deadline) {
+		if !m.IsEnabled("watch-flag") {
+			break
+		}
+		time.Sleep(50 * time.Millisecond)
+	}
+
+	if m.IsEnabled("watch-flag") {
+		t.Errorf("Expected watch-flag to be disabled after file change")
+	}
+}
 
 func TestNewManagerFromFile(t *testing.T) {
 	m, err := NewManagerFromFile()
